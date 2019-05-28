@@ -12,6 +12,7 @@ import {
   printSchema,
   buildClientSchema,
   extendSchema,
+  buildASTSchema,
 } from "graphql/utilities";
 import { mergeSchemas } from "graphql-tools";
 import { execute as graphql } from "graphql/execution";
@@ -203,6 +204,19 @@ export class Explorer extends Component {
         this.graphiql.handleRunQuery();
       }
     }
+
+    this.props.bridge.on("broadcast:typedefs", (typeDefsJson) => {
+      const typeDefs = JSON.parse(typeDefsJson);
+
+      let mergedSchema = buildSchema(typeDefs[0]);
+      const schemaExtensions = typeDefs.slice(1);
+      schemaExtensions.forEach(ext => { mergedSchema = extendSchema(mergedSchema, parse(ext)); }); 
+
+      this.setState({
+        schema: mergedSchema
+      })
+    });
+    bridge.send('panel:typedefs');
   }
 
   clearDefaultQueryState(query) {
@@ -226,6 +240,7 @@ export class Explorer extends Component {
     const { theme } = this.props;
 
     const graphiql = (
+<<<<<<< HEAD
       <div className="graphiql-container">
         <GraphiQLExplorer
           schema={schema}
@@ -260,6 +275,42 @@ export class Explorer extends Component {
               onClick={this.handleToggleExplorer}
               label="Explorer"
               title="Toggle Explorer"
+=======
+      <GraphiQL
+        schema={this.state.schema}
+        fetcher={this.fetcher}
+        query={this.state.query}
+        editorTheme={theme === "dark" ? "dracula" : "graphiql"}
+        onEditQuery={() => {
+          this.clearDefaultQueryState();
+        }}
+        onEditVariables={() => {
+          this.clearDefaultQueryState();
+        }}
+        storage={this.context.storage}
+        variables={this.state.variables}
+        ref={r => {
+          this.graphiql = r;
+        }}
+      >
+        <GraphiQL.Toolbar>
+          <GraphiQL.Button
+            onClick={this.handleClickPrettifyButton}
+            label="Prettify"
+          />
+          <label>
+            <input
+              type="checkbox"
+              checked={noFetch}
+              style={{ verticalAlign: "middle" }}
+              onChange={() => {
+                this.setState({
+                  noFetch: !noFetch,
+                  query: undefined,
+                  variables: undefined,
+                });
+              }}
+>>>>>>> Support client-only schema (no GraphQL server)
             />
             <label>
               <input

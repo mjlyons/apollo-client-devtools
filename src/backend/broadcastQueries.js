@@ -1,3 +1,5 @@
+import { buildSchemasFromTypeDefs as build } from "./typeDefs";
+
 export const initBroadCastEvents = (hook, bridge) => {
   // Counters for diagnostics
   let counter = 0;
@@ -70,6 +72,12 @@ export const initBroadCastEvents = (hook, bridge) => {
       inspector: client.cache.extract(true),
     };
     bridge.send("broadcast:new", JSON.stringify(initial));
+  });
+
+  bridge.on("panel:typedefs", () => {
+    const schemas = [...__APOLLO_CLIENT__.typeDefs] //build(__APOLLO_CLIENT__.typeDefs);
+    schemas[0] = `directive @client on FIELD\n${schemas[0]}`
+    bridge.send("broadcast:typedefs", JSON.stringify(schemas));
   });
 
   hook.ApolloClient.__actionHookForDevTools(logger);

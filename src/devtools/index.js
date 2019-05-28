@@ -29,6 +29,7 @@ export const initApp = shell => {
 };
 
 export const initDevTools = shell => {
+
   initApp(shell);
   shell.onReload(() => {
     bridge && bridge.removeAllListeners();
