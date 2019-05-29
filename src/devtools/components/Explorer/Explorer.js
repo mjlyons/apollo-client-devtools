@@ -29,6 +29,12 @@ let id = 0;
 const introAST = parse(introspectionQuery);
 const intro = introspectionQuery.replace(/\s/g, "");
 
+function filterDefinitions(operationName, parsedQuery) {
+  const specifiedOperationDefinition = parsedQuery.definitions.filter(definition => { return definition.kind === 'OperationDefinition' && definition.name.value === operationName });
+  const nonOperationsDefinitions = parsedQuery.definitions.filter(definition => { return definition.kind !== 'OperationDefinition'});
+  parsedQuery.definitions = [specifiedOperationDefinition, ...nonOperationsDefinitions];
+}
+
 export const createBridgeLink = bridge =>
   new ApolloLink(
     operation =>
@@ -36,7 +42,7 @@ export const createBridgeLink = bridge =>
         const key = operation.toKey();
         const { query, operationName, variables } = operation;
         const complete = () => obs.complete();
-        const error = err => obs.error(JSON.parse(err));
+        const error = err => obs.error(JSON.stringify({key, err: JSON.parse(err)}));
 
         const next = _result => {
           const result = JSON.parse(_result);
@@ -221,6 +227,21 @@ export class Explorer extends Component {
 
   clearDefaultQueryState(query) {
     this.setState({ query: query, variables: undefined });
+  }
+
+  fetcher = (graphqlParams) => {
+    const {operationName, query, variables = {}} = graphqlParams
+
+    // Remove unused "operations" (query, mutation)
+    const parsedQuery = parse(query);
+    filterDefinitions(operationName, parsedQuery);
+
+    return execute(this.link, {
+      operationName,  // This should filter the operation without manually doing it above /shrug
+      query: parsedQuery, // reparsedQuery,
+      variables,
+      context: { noFetch: this.state.noFetch },
+    });
   }
 
   handleClickPrettifyButton = event => {
