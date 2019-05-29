@@ -28,6 +28,12 @@ let id = 0;
 const introAST = parse(introspectionQuery);
 const intro = introspectionQuery.replace(/\s/g, "");
 
+function filterDefinitions(operationName, parsedQuery) {
+  const specifiedOperationDefinition = parsedQuery.definitions.filter(definition => { return definition.kind === 'OperationDefinition' && definition.name.value === operationName });
+  const nonOperationsDefinitions = parsedQuery.definitions.filter(definition => { return definition.kind !== 'OperationDefinition'});
+  parsedQuery.definitions = [specifiedOperationDefinition, ...nonOperationsDefinitions];
+}
+
 export const createBridgeLink = bridge =>
   new ApolloLink(
     operation =>
@@ -186,12 +192,20 @@ export class Explorer extends Component {
     this.setState({ query: undefined, variables: undefined });
   }
 
-  fetcher = ({ query, variables = {} }) =>
-    execute(this.link, {
-      query: parse(query),
+  fetcher = (graphqlParams) => {
+    const {operationName, query, variables = {}} = graphqlParams
+
+    // Remove unused "operations" (query, mutation)
+    const parsedQuery = parse(query);
+    filterDefinitions(operationName, parsedQuery);
+
+    return execute(this.link, {
+      operationName,  // This should filter the operation without manually doing it above /shrug
+      query: parsedQuery, // reparsedQuery,
       variables,
       context: { noFetch: this.state.noFetch },
     });
+  }
 
   handleClickPrettifyButton = event => {
     const editor = this.graphiql.getQueryEditor();
