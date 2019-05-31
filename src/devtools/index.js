@@ -14,6 +14,7 @@ export const initApp = shell => {
   shell.connect(bridge => {
     window.bridge = bridge;
     if (isChrome) chrome.runtime.sendMessage("apollo-panel-load");
+<<<<<<< HEAD
 
     const expectedConnectionNonce = createNonce();
     const pendingJumpstarts = [];
@@ -53,6 +54,8 @@ export const initApp = shell => {
     })
 
 
+=======
+>>>>>>> Fully reload devtools when a page reload happens (#205)
     const app = (
       <BridgeProvider bridge={bridge}>
         <StorageContextProvider storage={shell.storage}>
@@ -73,6 +76,6 @@ export const initDevTools = shell => {
   initApp(shell);
   shell.onReload(() => {
     bridge && bridge.removeAllListeners();
-    initApp(shell);
+    window.location.reload();
   });
 };
