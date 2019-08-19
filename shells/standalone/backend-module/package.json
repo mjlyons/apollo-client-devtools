@@ -1,0 +1,5 @@
+{
+  "name": "backend",
+  "module": "./backend.js",
+  "typings": "./backend.d.ts"
+}

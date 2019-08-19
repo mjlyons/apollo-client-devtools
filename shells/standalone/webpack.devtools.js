@@ -1,36 +1,34 @@
 const path = require("path");
 const webpack = require("webpack");
 const alias = require("../alias");
-const UglifyPlugin = require("uglifyjs-webpack-plugin");
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
+// const UglifyPlugin = require("uglifyjs-webpack-plugin");
+// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
+//   .BundleAnalyzerPlugin;
 
 const plugins = [new webpack.IgnorePlugin(/\.flow$/)];
-if (process.env.NODE_ENV === "production") {
-  plugins.push(
-    new webpack.DefinePlugin({
-      "process.env": {
-        NODE_ENV: JSON.stringify("production"),
-      },
-    }),
-  );
-  plugins.push(new UglifyPlugin());
-} else {
-  plugins.push(new BundleAnalyzerPlugin());
-}
+// if (process.env.NODE_ENV === "production") {
+//   plugins.push(
+//     new webpack.DefinePlugin({
+//       "process.env": {
+//         NODE_ENV: JSON.stringify("production"),
+//       },
+//     }),
+//   );
+//   plugins.push(new UglifyPlugin());
+// } else {
+//   plugins.push(new BundleAnalyzerPlugin());
+// }
 
 module.exports = {
-  entry: {
-    hook: "./src/hook.js",
-    devtools: "./src/devtools.js",
-    backend: "./src/backend.js",
-    target: "./target/index.js",
-  },
+  devtool:
+    process.env.NODE_ENV === "production" ? "source-map" : "eval-source-map",
+  entry: { devtools: "./src/devtools.js" },
   output: {
     path: path.join(__dirname, "dist"),
-    publicPath: "/dist/",
     filename: "[name].js",
+    libraryTarget: "commonjs2",
   },
+  externals: ["http", "ws"],
   resolve: { alias },
   module: {
     loaders: [

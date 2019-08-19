@@ -1,0 +1,15 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "bufferutil": "^4.0.1",
+    "cross-spawn": "^6.0.5",
+    "electron": "^6.0.2",
+    "minimist": "^1.2.0"
+  },
+  "scripts": {
+    "start": "node bin.js"
+  }
+}

@@ -1,7 +1,7 @@
 // this script is called when the Apollo devtools panel
 // is activated
 import wat, { initDevTools } from "src/devtools";
-import Bridge from "src/bridge";
+import Bridge from "../../../src/bridge";
 import { createChromeStorageAdapter } from "./ChromeStorageAdapter";
 
 createChromeStorageAdapter(chrome.storage.local, storage => {
