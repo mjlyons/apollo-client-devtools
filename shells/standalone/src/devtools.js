@@ -10,6 +10,9 @@ startServer(socket => {
         // TODO: implement
         const bridge = new Bridge({
           listen(dataHandler) {
+            console.info("devtools:listen");
+            console.log(dataHandler);
+
             socket.onmessage = evt => {
               console.info(
                 `Devtools received data from bridge: "${evt.data}}"`,

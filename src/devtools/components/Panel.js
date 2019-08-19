@@ -113,6 +113,8 @@ export default class Panel extends Component {
     });
 
     this.props.bridge.on("broadcast:new", _data => {
+      console.log(`panel received broadcast:new (_data=${_data})`);
+      debugger;
       const data = JSON.parse(_data);
       if (data.counter) this.props.bridge.send("broadcast:ack", data.counter);
       this.setState(({ tabData }) => ({

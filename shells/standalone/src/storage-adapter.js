@@ -19,23 +19,28 @@ class StorageAdapter {
   updateRemoteStorage = () => {};
 
   getItem = keyName => {
-    console.warn("createStorageAdapter:getItem not implemented");
+    console.warn(`createStorageAdapter:getItem not implemented (k=${keyName})`);
     return this.fakeKVStore[keyName];
   };
 
   setItem = (keyName, value) => {
-    console.warn("createStorageAdapter:getItem not implemented");
+    console.warn(
+      `createStorageAdapter:getItem not implemented (k=${keyName}, v=${value}`,
+    );
     this.fakeKVStore[keyName] = value;
+    this.updateRemoteStorage();
   };
 
   removeItem = keyName => {
-    console.warn("createStorageAdapter:getItem not implemented");
+    console.warn(`createStorageAdapter:getItem not implemented (k=${keyName})`);
     delete this.fakeKVStore[keyName];
+    this.updateRemoteStorage();
   };
 
   clear = () => {
     console.warn("createStorageAdapter:getItem not implemented");
     this.fakeKVStore = {};
+    this.updateRemoteStorage();
   };
 }
 
